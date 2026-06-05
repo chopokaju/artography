@@ -182,16 +182,16 @@
     display: none;
     min-height: 100vh;
     padding-top: 90px;
-    opacity: 0;
-    transform: translateY(16px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity .45s ease, transform .45s ease;
   }
   .page.active {
     display: block;
   }
-  .page.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .page.animating-in {
+    opacity: 0;
+    transform: translateY(16px);
   }
 
   /* ===================== HOME PAGE ===================== */
@@ -1806,8 +1806,8 @@ function drawBG() {
 
   // Radial dark bg
   const bgGrad = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, Math.max(W,H)*0.7);
-  bgGrad.addColorStop(0, '#12121a');
-  bgGrad.addColorStop(1, '#08080c');
+  bgGrad.addColorStop(0, '#18182a');
+  bgGrad.addColorStop(1, '#0a0a10');
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
@@ -1825,8 +1825,8 @@ function drawBG() {
     const pulse = 1 + 0.08 * Math.sin(t * 0.8 + b.phase);
     const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br * pulse);
     const hex = b.color;
-    grad.addColorStop(0, hex + '28');
-    grad.addColorStop(0.4, hex + '12');
+    grad.addColorStop(0, hex + '55');
+    grad.addColorStop(0.4, hex + '22');
     grad.addColorStop(1, 'transparent');
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -1876,7 +1876,7 @@ let cartCount = 0;
 
 function nav(page) {
   document.querySelectorAll('.page').forEach(p => {
-    p.classList.remove('active', 'visible');
+    p.classList.remove('active');
   });
   document.querySelectorAll('.nav-links a').forEach(a => {
     a.classList.toggle('active', a.dataset.page === page);
@@ -1884,22 +1884,17 @@ function nav(page) {
 
   const target = document.getElementById(page);
   if (!target) return;
-  target.classList.add('active');
+  target.classList.add('active', 'animating-in');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      target.classList.add('visible');
+      target.classList.remove('animating-in');
       if (page === 'about') initSkillBars();
       if (page === 'gallery') buildGalleryMasonry();
     });
   });
 }
-
-// Trigger first page
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('home').classList.add('visible');
-});
 
 function closeMobileMenu() {
   document.getElementById('mobileMenu').classList.remove('open');
