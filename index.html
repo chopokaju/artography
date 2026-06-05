@@ -34,6 +34,34 @@
     min-height: 100vh;
   }
 
+  /* STATIC CSS LIGHT BLOBS — always visible, canvas animates on top */
+  .bg-lights {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .bg-lights::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 10% 20%,  rgba(90, 0, 180, 0.55) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 50% at 88% 60%,  rgba(80, 0, 160, 0.50) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 45% at 50% 90%,  rgba(0,  180, 150, 0.45) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 38% at 85% 10%,  rgba(230, 85,  0,   0.50) 0%, transparent 60%),
+      radial-gradient(ellipse 38% 35% at 30% 55%,  rgba(0,  155, 125, 0.38) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 28% at 62% 18%,  rgba(200, 70,  0,   0.40) 0%, transparent 55%);
+    animation: bg-pulse 9s ease-in-out infinite alternate;
+  }
+  @keyframes bg-pulse {
+    0%   { opacity: 0.85; transform: scale(1)    rotate(0deg); }
+    33%  { opacity: 1.00; transform: scale(1.04) rotate(0.5deg); }
+    66%  { opacity: 0.90; transform: scale(0.97) rotate(-0.5deg); }
+    100% { opacity: 1.00; transform: scale(1.02) rotate(0.3deg); }
+  }
+
   /* CUSTOM CURSOR — decorative overlay only, native cursor stays visible */
   .cursor {
     position: fixed;
@@ -1216,6 +1244,7 @@
 </head>
 <body>
 
+<div class="bg-lights"></div>
 <canvas id="bg-canvas"></canvas>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -1780,13 +1809,14 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Paint blobs (slow-drifting color orbs)
+// Paint blobs (slow-drifting color orbs) — deep purple, teal, orange palette
 const BLOBS = [
-  { x: 0.15, y: 0.2, r: 0.38, color: '#00e5ff', vx: 0.00012, vy: 0.00008, phase: 0 },
-  { x: 0.85, y: 0.6, r: 0.32, color: '#ff2d78', vx: -0.0001, vy: 0.00006, phase: 1.5 },
-  { x: 0.5,  y: 0.85, r: 0.28, color: '#c44dff', vx: 0.00007, vy: -0.0001, phase: 3 },
-  { x: 0.7,  y: 0.1, r: 0.22, color: '#ffe100', vx: -0.00009, vy: 0.00012, phase: 4.5 },
-  { x: 0.3,  y: 0.65, r: 0.25, color: '#39ff14', vx: 0.00008, vy: -0.00007, phase: 2 },
+  { x: 0.12, y: 0.25, r: 0.50, color: '#6a00c8', vx: 0.00010, vy: 0.00007, phase: 0 },    // deep purple — top left
+  { x: 0.78, y: 0.55, r: 0.44, color: '#5a00b8', vx: -0.00008, vy: 0.00005, phase: 2.1 }, // purple-violet — right mid
+  { x: 0.45, y: 0.80, r: 0.40, color: '#00b89c', vx: 0.00006, vy: -0.00009, phase: 3.8 }, // greenish turquoise — bottom center
+  { x: 0.85, y: 0.15, r: 0.30, color: '#ff6a00', vx: -0.00011, vy: 0.00010, phase: 5.2 }, // warm orange — top right
+  { x: 0.30, y: 0.50, r: 0.32, color: '#008f7a', vx: 0.00009, vy: -0.00006, phase: 1.4 }, // deep teal — left mid
+  { x: 0.60, y: 0.20, r: 0.26, color: '#e05a00', vx: -0.00007, vy: 0.00008, phase: 4.0 }, // amber orange — top center
 ];
 
 // Stars
@@ -1798,12 +1828,12 @@ const STARS = Array.from({length: 180}, () => ({
   phase: Math.random() * Math.PI * 2,
 }));
 
-// Ink spatter particles
-const PARTICLES = Array.from({length: 60}, () => ({
+// Ink spatter particles — purple / teal / orange palette
+const PARTICLES = Array.from({length: 70}, () => ({
   x: Math.random(), y: Math.random(),
-  r: Math.random() * 3 + 1,
-  color: ['#00e5ff','#ff2d78','#ffe100','#c44dff','#39ff14'][Math.floor(Math.random()*5)],
-  a: Math.random() * 0.35 + 0.05,
+  r: Math.random() * 2.5 + 0.8,
+  color: ['#7b10e0','#5a00b8','#00c9a7','#00b89c','#ff6a00','#e05a00','#9b30ff'][Math.floor(Math.random()*7)],
+  a: Math.random() * 0.4 + 0.08,
   vx: (Math.random() - 0.5) * 0.00015,
   vy: (Math.random() - 0.5) * 0.00015,
 }));
@@ -1834,8 +1864,9 @@ function drawBG() {
     const pulse = 1 + 0.08 * Math.sin(t * 0.8 + b.phase);
     const grad = ctx.createRadialGradient(bx, by, 0, bx, by, br * pulse);
     const hex = b.color;
-    grad.addColorStop(0, hex + '55');
-    grad.addColorStop(0.4, hex + '22');
+    grad.addColorStop(0, hex + '88');
+    grad.addColorStop(0.35, hex + '44');
+    grad.addColorStop(0.7, hex + '18');
     grad.addColorStop(1, 'transparent');
     ctx.fillStyle = grad;
     ctx.beginPath();
