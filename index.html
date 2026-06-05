@@ -163,18 +163,41 @@
     text-decoration: none;
     position: relative;
     transition: color .2s;
+    padding-bottom: 6px;
   }
-  .nav-links a::after {
-    content: '';
+
+  /* Hand-drawn SVG squiggle underline */
+  .nav-links a .squiggle {
     position: absolute;
-    bottom: -3px; left: 0;
-    width: 0; height: 2px;
-    background: var(--vivid-cyan);
-    transition: width .25s ease;
+    bottom: -2px; left: -4px;
+    width: calc(100% + 8px);
+    height: 8px;
+    overflow: visible;
+    pointer-events: none;
   }
+  .nav-links a .squiggle path {
+    stroke: var(--vivid-cyan);
+    stroke-width: 2.2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+    transition: stroke-dashoffset 0s;
+    filter: drop-shadow(0 0 4px var(--vivid-cyan));
+  }
+  .nav-links a:hover .squiggle path,
+  .nav-links a.active .squiggle path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset .35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav-links a.active .squiggle path {
+    stroke: var(--vivid-cyan);
+    transition: stroke-dashoffset 0s; /* instant on active */
+    stroke-dashoffset: 0;
+  }
+
   .nav-links a:hover { color: var(--vivid-cyan); }
-  .nav-links a:hover::after,
-  .nav-links a.active::after { width: 100%; }
   .nav-links a.active { color: var(--vivid-cyan); }
 
   .nav-cta {
@@ -1289,11 +1312,11 @@
   </a>
 
   <ul class="nav-links">
-    <li><a href="#" onclick="nav('home'); return false;" data-page="home" class="active">Home</a></li>
-    <li><a href="#" onclick="nav('gallery'); return false;" data-page="gallery">Gallery</a></li>
-    <li><a href="#" onclick="nav('events'); return false;" data-page="events">Events</a></li>
-    <li><a href="#" onclick="nav('contact'); return false;" data-page="contact">Contact</a></li>
-    <li><a href="#" onclick="nav('about'); return false;" data-page="about">About</a></li>
+    <li><a href="#" onclick="nav('home'); return false;" data-page="home" class="active">Home<svg class="squiggle" viewBox="0 0 60 8" preserveAspectRatio="none"><path d="M2,5 C8,2 14,7 20,4 C26,1 32,7 38,4 C44,1 50,6 58,4"/></svg></a></li>
+    <li><a href="#" onclick="nav('gallery'); return false;" data-page="gallery">Gallery<svg class="squiggle" viewBox="0 0 60 8" preserveAspectRatio="none"><path d="M2,5 C8,2 14,7 20,4 C26,1 32,7 38,4 C44,1 50,6 58,4"/></svg></a></li>
+    <li><a href="#" onclick="nav('events'); return false;" data-page="events">Events<svg class="squiggle" viewBox="0 0 60 8" preserveAspectRatio="none"><path d="M2,5 C8,2 14,7 20,4 C26,1 32,7 38,4 C44,1 50,6 58,4"/></svg></a></li>
+    <li><a href="#" onclick="nav('contact'); return false;" data-page="contact">Contact<svg class="squiggle" viewBox="0 0 60 8" preserveAspectRatio="none"><path d="M2,5 C8,2 14,7 20,4 C26,1 32,7 38,4 C44,1 50,6 58,4"/></svg></a></li>
+    <li><a href="#" onclick="nav('about'); return false;" data-page="about">About<svg class="squiggle" viewBox="0 0 60 8" preserveAspectRatio="none"><path d="M2,5 C8,2 14,7 20,4 C26,1 32,7 38,4 C44,1 50,6 58,4"/></svg></a></li>
     <li>
       <div class="cart-wrap">
         <a href="#" onclick="nav('storefront'); return false;" data-page="storefront" class="nav-cta">Storefront</a>
