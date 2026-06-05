@@ -32,34 +32,35 @@
     font-family: 'Special Elite', serif;
     overflow-x: hidden;
     min-height: 100vh;
-    cursor: none;
   }
 
-  /* CUSTOM CURSOR */
+  /* CUSTOM CURSOR — decorative overlay only, native cursor stays visible */
   .cursor {
     position: fixed;
-    width: 12px; height: 12px;
+    width: 8px; height: 8px;
     background: var(--vivid-cyan);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: width .15s, height .15s, background .15s;
     mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity .2s, width .15s, height .15s, background .15s;
   }
+  .cursor.visible { opacity: 1; }
   .cursor-ring {
     position: fixed;
     width: 36px; height: 36px;
-    border: 1.5px solid rgba(0,229,255,0.5);
+    border: 1.5px solid rgba(0,229,255,0.45);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
-    transition: all .1s ease;
     mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity .2s;
   }
-  body:has(a:hover) .cursor,
-  body:has(button:hover) .cursor { width: 20px; height: 20px; background: var(--vivid-magenta); }
+  .cursor-ring.visible { opacity: 1; }
 
   /* CANVAS BACKGROUND */
   #bg-canvas {
@@ -1746,8 +1747,16 @@
 // ===================== CUSTOM CURSOR =====================
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+let mx = -999, my = -999, rx = -999, ry = -999;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.classList.add('visible');
+  ring.classList.add('visible');
+});
+document.addEventListener('mouseleave', () => {
+  cursor.classList.remove('visible');
+  ring.classList.remove('visible');
+});
 function animCursor() {
   cursor.style.left = mx + 'px';
   cursor.style.top = my + 'px';
